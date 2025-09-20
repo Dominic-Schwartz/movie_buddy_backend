@@ -1,13 +1,13 @@
-package nl.moviebuddy.moviebuddybackend;
+package nl.moviebuddy;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MoviebuddyBackendApplication {
+public class MovieBuddyApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MoviebuddyBackendApplication.class, args);
+        SpringApplication.run(MovieBuddyApplication.class, args);
     }
 
 }
