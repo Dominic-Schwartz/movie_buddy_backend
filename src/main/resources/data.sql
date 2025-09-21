@@ -17,3 +17,10 @@ values ('buddytester','buddytester@moviebuddy.nl','demo','ROLE_USER');
 insert into profiles (avatar_url, bio, user_id)
 select 'https://example.com/avatar.png','Demo user profile', u.id
 from users u where u.username = 'buddytester';
+
+-- 1 demo-review van buddytester voor 'Edge of Action' (rating 8)
+insert into reviews (rating, review_text, created_at, user_id, movie_id)
+select 8, 'Sterk tempo, toffe actie.', CURRENT_TIMESTAMP, u.id, m.id
+from users u
+         join movies m on m.title = 'Edge of Action'
+where u.username = 'buddytester';
