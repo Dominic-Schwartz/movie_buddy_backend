@@ -17,7 +17,6 @@ public class Profile {
     @Column(length = 500)
     private String bio;
 
-    // owning side van de 1–1 relatie
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;

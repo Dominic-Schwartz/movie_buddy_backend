@@ -31,7 +31,6 @@ public class User {
     @Column(nullable=false, length=20)
     private Role role = Role.ROLE_USER;
 
-    // 1–1 naar Profile (inverse kant; Profile wordt de owning side)
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Profile profile;
 
