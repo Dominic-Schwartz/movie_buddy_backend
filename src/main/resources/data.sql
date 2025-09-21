@@ -24,3 +24,16 @@ select 8, 'Sterk tempo, toffe actie.', CURRENT_TIMESTAMP, u.id, m.id
 from users u
          join movies m on m.title = 'Edge of Action'
 where u.username = 'buddytester';
+
+-- één watchlist-item voor buddytester -> Edge of Action
+insert into watchlist_items (date_added, status, note, user_id, movie_id)
+select CURRENT_DATE, 'TO_WATCH', 'Eerst trailer kijken', u.id, m.id
+from users u
+         join movies m on m.title = 'Edge of Action'
+where u.username = 'buddytester';
+
+-- één upload voor 'Edge of Action'
+insert into uploads (filename, content_type, upload_date, movie_id)
+select 'edge-of-action-poster.jpg', 'image/jpeg', CURRENT_TIMESTAMP, m.id
+from movies m
+where m.title = 'Edge of Action';
