@@ -1,4 +1,9 @@
 package nl.moviebuddy.services;
 
-public class GenreService {
+import nl.moviebuddy.dto.genre.GenreResponse;
+import java.util.List;
+
+public interface GenreService {
+    List<GenreResponse> listAll();
 }
+
