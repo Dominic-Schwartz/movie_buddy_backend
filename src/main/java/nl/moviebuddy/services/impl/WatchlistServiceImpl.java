@@ -12,7 +12,8 @@ import nl.moviebuddy.services.WatchlistService;
 import nl.moviebuddy.util.WatchlistMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import nl.moviebuddy.exceptions.NotFoundException;
+import nl.moviebuddy.exceptions.ConflictException;
 import java.util.List;
 
 @Service
@@ -33,8 +34,27 @@ public class WatchlistServiceImpl implements WatchlistService {
 
     @Override
     public WatchlistItemResponse addItem(WatchlistAddRequest req) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        User user = userRepo.findById(req.getUserId())
+                .orElseThrow(() -> new NotFoundException("User not found: " + req.getUserId()));
+
+        Movie movie = movieRepo.findById(req.getMovieId())
+                .orElseThrow(() -> new NotFoundException("Movie not found: " + req.getMovieId()));
+
+        if (watchlistRepo.existsByUserIdAndMovieId(user.getId(), movie.getId())) {
+            throw new ConflictException("Movie already in watchlist for this user");
+        }
+
+        WatchlistItem wi = new WatchlistItem();
+        wi.setUser(user);
+        wi.setMovie(movie);
+        wi.setStatus(req.getStatus());
+        wi.setNote(req.getNote());
+
+        WatchlistItem saved = watchlistRepo.save(wi);
+
+        return WatchlistMapper.toResponse(saved);
     }
+
 
     @Override
     @Transactional(readOnly = true)
