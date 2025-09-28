@@ -66,6 +66,11 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public void deleteReview(Long reviewId, Long userId) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        var review = reviewRepo.findById(reviewId)
+                .orElseThrow(() -> new NotFoundException("Review not found: " + reviewId));
+        if (!review.getUser().getId().equals(userId)) {
+            throw new NotFoundException("Review not found for this user");
+        }
+        reviewRepo.delete(review);
     }
 }
