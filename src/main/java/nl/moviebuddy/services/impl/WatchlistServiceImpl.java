@@ -66,6 +66,11 @@ public class WatchlistServiceImpl implements WatchlistService {
 
     @Override
     public void removeItem(Long itemId, Long userId) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        var item = watchlistRepo.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("Watchlist item not found: " + itemId));
+        if (!item.getUser().getId().equals(userId)) {
+            throw new NotFoundException("Watchlist item not found for this user");
+        }
+        watchlistRepo.delete(item);
     }
 }
