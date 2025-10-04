@@ -33,3 +33,7 @@ logging:
   level:
     org.hibernate.SQL: debug
     org.hibernate.orm.jdbc.bind: trace
+
+jwt:
+  secret: "change-this-in-prod-very-long-random-string-32+chars"
+  expirationMillis: 3600000   # 1 hour
