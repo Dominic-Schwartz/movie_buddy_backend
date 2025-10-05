@@ -1,7 +1,6 @@
 package nl.moviebuddy.util;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.SecretKey;
@@ -29,10 +28,16 @@ public class JwtUtil {
                 .compact();
     }
 
+    public Jws<Claims> parse(String token) throws JwtException {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+    }
+
     public String extractUsername(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+        return parse(token).getBody().getSubject();
+    }
+
+    public String extractRole(String token) {
+        Object role = parse(token).getBody().get("role");
+        return role != null ? role.toString() : null;
     }
 }
