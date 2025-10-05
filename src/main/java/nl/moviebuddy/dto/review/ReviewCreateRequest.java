@@ -1,10 +1,11 @@
 package nl.moviebuddy.dto.review;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+import lombok.*;
 
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ReviewCreateRequest {
 
     @NotNull
@@ -18,13 +19,4 @@ public class ReviewCreateRequest {
 
     @Size(max = 2000)
     private String reviewText;
-
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
-    public Long getMovieId() { return movieId; }
-    public void setMovieId(Long movieId) { this.movieId = movieId; }
-    public Integer getRating() { return rating; }
-    public void setRating(Integer rating) { this.rating = rating; }
-    public String getReviewText() { return reviewText; }
-    public void setReviewText(String reviewText) { this.reviewText = reviewText; }
 }
