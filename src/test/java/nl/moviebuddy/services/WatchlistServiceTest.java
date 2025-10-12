@@ -4,6 +4,7 @@ import nl.moviebuddy.dto.watchlist.WatchlistAddRequest;
 import nl.moviebuddy.entities.Movie;
 import nl.moviebuddy.entities.User;
 import nl.moviebuddy.entities.WatchlistItem;
+import nl.moviebuddy.exceptions.NotFoundException;
 import nl.moviebuddy.repositories.MovieRepository;
 import nl.moviebuddy.repositories.UserRepository;
 import nl.moviebuddy.repositories.WatchlistItemRepository;
@@ -25,7 +26,7 @@ class WatchlistServiceTest {
     private WatchlistService service;
 
     @BeforeEach
-    void setup() {
+    void setUp() {
         watchlistRepo = mock(WatchlistItemRepository.class);
         userRepo = mock(UserRepository.class);
         movieRepo = mock(MovieRepository.class);
@@ -59,5 +60,52 @@ class WatchlistServiceTest {
         assertEquals("TO_WATCH", saved.getStatus());
         assertEquals("Eerst trailer kijken", saved.getNote());
         assertEquals(999L, resp.getId());
+
+        verify(watchlistRepo).existsByUserIdAndMovieId(1L, 10L);
+        verifyNoMoreInteractions(watchlistRepo);
+    }
+
+    @Test
+    void addItem_throwsWhenDuplicate() {
+        var req = new WatchlistAddRequest(1L, 10L, "TO_WATCH", "dup");
+
+        var u = new User(); u.setId(1L);
+        var m = new Movie(); m.setId(10L);
+
+        when(userRepo.findById(1L)).thenReturn(Optional.of(u));
+        when(movieRepo.findById(10L)).thenReturn(Optional.of(m));
+        when(watchlistRepo.existsByUserIdAndMovieId(1L, 10L)).thenReturn(true);
+
+        var ex = assertThrows(RuntimeException.class, () -> service.addItem(req),
+                "Bij duplicate verwachten we een exception (bijv. ConflictException)");
+
+        verify(watchlistRepo, never()).save(any());
+    }
+
+    @Test
+    void addItem_throwsWhenUserNotFound() {
+        var req = new WatchlistAddRequest(42L, 10L, "TO_WATCH", null);
+
+        when(userRepo.findById(42L)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> service.addItem(req));
+
+        verify(movieRepo, never()).findById(anyLong());
+        verify(watchlistRepo, never()).existsByUserIdAndMovieId(anyLong(), anyLong());
+        verify(watchlistRepo, never()).save(any());
+    }
+
+    @Test
+    void addItem_throwsWhenMovieNotFound() {
+        var req = new WatchlistAddRequest(1L, 404L, "TO_WATCH", null);
+
+        var u = new User(); u.setId(1L);
+        when(userRepo.findById(1L)).thenReturn(Optional.of(u));
+        when(movieRepo.findById(404L)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> service.addItem(req));
+
+        verify(watchlistRepo, never()).existsByUserIdAndMovieId(anyLong(), anyLong());
+        verify(watchlistRepo, never()).save(any());
     }
 }
