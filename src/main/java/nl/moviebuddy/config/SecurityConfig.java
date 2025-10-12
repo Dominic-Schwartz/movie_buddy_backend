@@ -28,6 +28,8 @@ public class SecurityConfig {
                 .headers(h -> h.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)) // H2-console
                 .authorizeHttpRequests(auth -> auth
 
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+
                         .requestMatchers("/auth/**", "/genres/**", "/movies/**", "/h2/**").permitAll()
 
                         .requestMatchers("/users/*/watchlist/**", "/reviews/**").hasAuthority("ROLE_USER")
